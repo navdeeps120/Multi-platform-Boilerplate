@@ -12,7 +12,8 @@
   "scripts": {
     "dev": "vite",
     "dev:electron": "concurrently -k \"vite\" \"npm run dev:electron:only\"",
-    "dev:electron:only": "wait-on tcp:5173 && cross-env NODE_ENV=development nodemon --watch electron --ext cjs,json --exec \"electron .\"",
+    "dev:electron:only": "wait-on tcp:5173 && cross-env NODE_ENV=development VITE_DEV_SERVER_URL=http://localhost:5173 nodemon --watch electron --ext cjs,json --exec \"electron .\"",
+    "sync:android:dev": "wait-on tcp:5173 && npx cap sync android && npx cap open android",
     "dev:android": "concurrently -k \"vite\" \"npm run sync:android:dev\"",
     "build:web": "vite build",
     "build:android": "vite build --mode capacitor && npx cap sync android",
@@ -27,7 +28,8 @@
     "@capacitor/core": "^8.3.1",
     "@capacitor/ios": "^8.3.1",
     "react": "^19.2.4",
-    "react-dom": "^19.2.4"
+    "react-dom": "^19.2.4",
+    "react-router-dom": "^7.14.1"
   },
   "devDependencies": {
     "@capacitor/cli": "^8.3.1",
@@ -80,5 +82,5 @@
         "url": "https://updates.invalid/satosangyo"
       }
     ]
-  },
+  }
 }
