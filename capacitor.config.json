@@ -1,5 +1,29 @@
 {
-  "appId": "com.navdeep.app",
-  "appName": "frontend",
-  "webDir": "dist"
+  "appId": "com.example.app",
+  "appName": "Example App",
+  "webDir": "dist",
+  "server": {
+    "androidScheme": "http",
+    "url": "http://10.0.2.2:5173",
+    "cleartext": true
+  },
+  "android": {
+    "allowMixedContent": false,
+    "captureInput": true,
+    "webContentsDebuggingEnabled": false
+  },
+  "plugins": {
+    "CapacitorHttp": { "enabled": true },
+    "PushNotifications": {
+      "presentationOptions": ["badge", "sound", "alert"]
+    },
+    "SplashScreen": {
+      "launchShowDuration": 2000,
+      "launchAutoHide": true,
+      "backgroundColor": "#ffffff",
+      "androidSplashResourceName": "splash",
+      "androidScaleType": "CENTER_CROP",
+      "showSpinner": false
+    }
+  }
 }

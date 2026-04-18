@@ -1,12 +1,10 @@
 # Multi-platform Boilerplate
 
-A starter template for building one React codebase and targeting:
+A starter template to run a single React app across:
 
-- Web with Vite
-- Desktop with Electron
-- Mobile with Capacitor (Android and iOS)
-
-This project is intended to help you move quickly from prototype to multi-platform delivery with a familiar frontend stack.
+- Web (Vite)
+- Desktop (Electron)
+- Mobile (Capacitor: Android + iOS)
 
 ## Tech Stack
 
@@ -20,192 +18,146 @@ This project is intended to help you move quickly from prototype to multi-platfo
 
 ```text
 .
-|-- src/                    # React application source
-|-- public/                 # Static assets
-|-- electron/               # Electron main/preload process files
+|-- src/                    # React app source
+|-- public/                 # Static web assets
+|-- electron/               # Electron main and preload process
 |-- capacitor/              # Native platform projects (android/ios)
-|-- capacitor.config.json   # Capacitor app configuration
+|-- capacitor.config.json   # Capacitor configuration
 |-- vite.config.js          # Vite configuration
 |-- package.json            # Scripts and dependencies
 ```
 
 ## Prerequisites
 
-Install the following tools before starting:
-
 - Node.js 20+ and npm
+- Android Studio (for Android)
+- Xcode (for iOS, macOS only)
 - Git
-- Android Studio (for Android builds)
-- Xcode (for iOS builds, macOS only)
 
-Optional but recommended:
+Recommended for Android:
 
-- Java 17 (Android toolchain)
+- Java 17
 
-## Getting Started
-
-1. Clone the repository.
-2. Install dependencies.
+## Setup
 
 ```bash
 npm install
 ```
 
-3. Run web development mode.
+## Development Commands
+
+- `npm run dev`
+  - Starts Vite only (web development).
+
+- `npm run dev:electron`
+  - Starts Vite + Electron together.
+
+- `npm run dev:electron:only`
+  - Starts Electron only, assumes Vite is already running on port 5173.
+
+- `npm run sync:android:dev`
+  - Waits for Vite on port 5173, syncs Capacitor Android, then opens Android Studio.
+
+- `npm run dev:android`
+  - Starts Vite + Android sync/open flow together.
+
+## Build Commands
+
+- `npm run build:web`
+  - Production build for web.
+
+- `npm run build:mobile`
+  - Production web build for Capacitor consumption.
+
+- `npm run build:android`
+  - Builds for mobile and runs `cap sync android`.
+
+- `npm run build:windows`
+  - Builds with Electron mode and packages a Windows app via `electron-builder`.
+
+## Utility Commands
+
+- `npm run lint`
+- `npm run preview`
+- `npm run generate:assets`
+
+## Recommended Workflows
+
+### Web
 
 ```bash
 npm run dev
 ```
 
-Vite runs on http://localhost:5173.
-
-## Available Scripts
-
-### Development
-
-- npm run dev
-	- Starts Vite web dev server.
-
-- npm run dev:electron
-	- Starts Vite and Electron together for desktop development.
-
-- npm run dev:electron:only
-	- Starts only Electron side watcher and launches Electron (expects Vite server already running).
-
-- npm run dev:android
-	- Starts Vite and tries to run sync workflow for Android.
-	- Note: this script currently references sync:android:dev, which is not defined in package.json.
-
-### Build
-
-- npm run build:web
-	- Builds web output into dist.
-
-- npm run build:mobile
-	- Builds web assets for Capacitor usage.
-
-- npm run build:android
-	- Builds web assets and runs Capacitor sync for Android.
-
-- npm run build:windows
-	- Builds web assets and packages a Windows app via electron-builder.
-
-### Utilities
-
-- npm run generate:assets
-	- Generates Capacitor Android app icons/splash resources.
-
-- npm run lint
-	- Runs ESLint.
-
-- npm run preview
-	- Serves production web build locally.
-
-## Platform Workflows
-
-## Web
-
-Development:
-
-```bash
-npm run dev
-```
-
-Production build:
-
-```bash
-npm run build:web
-npm run preview
-```
-
-## Electron (Desktop)
-
-Development:
+### Electron (Desktop)
 
 ```bash
 npm run dev:electron
 ```
 
-Windows package:
+### Android (Capacitor)
 
-```bash
-npm run build:windows
-```
-
-Build artifacts are generated in windows-build.
-
-## Capacitor Android
-
-If this is your first setup on a fresh clone:
+First-time setup:
 
 ```bash
 npx cap sync android
-```
-
-Open Android Studio:
-
-```bash
 npx cap open android
 ```
 
-Typical Android build flow:
+Daily Android dev:
 
 ```bash
-npm run build:android
-npx cap open android
+npm run dev:android
 ```
 
-## Capacitor iOS
+### Side-by-side: Electron + Android
 
-Build web assets:
+If you want Electron and Android running at the same time, avoid starting multiple Vite servers on the same port.
+
+Use this order:
+
+1. `npm run dev:electron`
+2. `npm run sync:android:dev`
+
+Do not run `npm run dev:android` while `npm run dev:electron` is already running, because both try to start Vite on port 5173.
+
+### iOS (Capacitor)
 
 ```bash
 npm run build:mobile
-```
-
-Sync iOS platform:
-
-```bash
 npx cap sync ios
-```
-
-Open Xcode:
-
-```bash
 npx cap open ios
 ```
 
 ## Configuration Notes
 
-- Capacitor app metadata is in capacitor.config.json.
-- Electron entry point is electron/main.cjs.
-- Electron preload script is electron/preload.cjs.
-- Vite output directory is dist.
+- Capacitor dev server target is configured in `capacitor.config.json`.
+- Electron entry point is `electron/main.cjs`.
+- Electron preload is `electron/preload.cjs`.
+- Vite dev server runs on port `5173`.
 
 ## Troubleshooting
 
-- If Electron starts with a blank window in development:
-	- Ensure Vite is running on port 5173.
-	- Check your firewall or security software is not blocking localhost.
+- `Port 5173 is already in use`
+  - Kill the existing process using port 5173, then rerun your command.
 
-- If Android sync or open fails:
-	- Verify Android Studio is installed and SDK tools are configured.
-	- Run npx cap doctor and resolve reported issues.
+- Android shows connection timeout while Electron works
+  - Ensure Vite is running and reachable.
+  - Confirm your Capacitor `server.url` points to a reachable host for the emulator/device.
+  - Run `npx cap doctor`.
 
-- If npm run dev:android fails immediately:
-	- Add a missing sync:android:dev script in package.json, or use the manual flow:
-		1) npm run build:android
-		2) npx cap open android
+- Electron blank screen in dev
+  - Ensure Vite is running before Electron starts.
+  - Verify `VITE_DEV_SERVER_URL=http://localhost:5173` is set in the Electron dev script.
 
-## Customization Checklist
+## Before Publishing
 
-Before publishing your own app, update:
+Update these values for your app:
 
-- App name and appId in capacitor.config.json
-- App metadata under build in package.json
-- Electron icons under electron/assets/
-- Bundle identifiers, signing, and release settings per platform
+- `appId` and `appName` in `capacitor.config.json`
+- `build.appId`, `build.productName`, signing, and publish settings in `package.json`
+- app icons in `electron/assets`
 
 ## License
 
-Choose and add a license file that matches your distribution goals.
+Add a license file appropriate for your project.
